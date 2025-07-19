@@ -9,23 +9,16 @@ plugins {
     id("org.jetbrains.kotlin.plugin.noarg") version "1.9.23"
 }
 
-allOpen {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.persistence.MappedSuperclass")
-    annotation("jakarta.persistence.Embeddable")
-}
-
-noArg {
-    annotation("jakarta.persistence.Entity")
-    annotation("jakarta.persistence.MappedSuperclass")
-    annotation("jakarta.persistence.Embeddable")
-}
 
 group = "com.example" // Puedes cambiar esto a tu grupo de paquetes
 version = "0.0.1-SNAPSHOT" // Puedes cambiar esto a tu versión
 
+
+// El bloque 'java' debe ir aquí, fuera del bloque 'plugins'
 java {
-    sourceCompatibility = JavaVersion.VERSION_17 // Coincide con Java 17 de tus logs
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17) // ¡Asegúrate de que sea 17!
+    }
 }
 
 repositories {
@@ -37,13 +30,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     // Módulo Jackson para Kotlin (manejo de JSON)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // Soporte para reflexión de Kotlin (a menudo necesario con Spring y Hibernate)
+
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     // Kotlin Standard Library para JDK 8 (se usa aunque tu JDK sea 17, es una dependencia estándar)
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // Spring Boot Starter para JPA (incluye Hibernate)
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
     // Driver de la base de datos H2 (en memoria o basado en archivos)
     runtimeOnly("com.h2database:h2") // 'runtimeOnly' porque solo se necesita en tiempo de ejecución
 
@@ -57,6 +51,21 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test") // Para testing de seguridad
     testImplementation(kotlin("test")) // Para escribir tests en Kotlin
+
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+
+
+    // Para manejar JSON con Kotlin
+    // Otras dependencias necesarias
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "junit")
+    }
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
